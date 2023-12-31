@@ -81,6 +81,54 @@ To overcome single-threaded limitations, Web APIs like `setTimeout()` and `setIn
 
 ## Execution context
 
+In JavaScript, code runs in an execution context, of which there are three types:
+
+1. **Global Context:** For code outside any function.
+2. **Local Context:** Each function runs in its own context.
+3. **Eval Context:** Created by using `eval()`.
+
+Each context is a scope level. When code starts, a new context is created and then destroyed when the code exits. Consider a JavaScript program with multiple function calls:
+
+- The global context is created at program start.
+- Calling a function like `greetUser()` creates a new local context.
+- Inside `greetUser()`, calling another function, say `localGreeting()`, creates another context.
+- After `localGreeting()` finishes, its context is destroyed, returning to the `greetUser()` context.
+- After `greetUser()` finishes, its context is destroyed, returning to the global context.
+- This process repeats for each function call.
+
+Each context manages its own variables and tracks the next execution line. This system handles local/global variables and function calls/returns.
+
+Note on recursive functions: Each call creates a new context, which requires more memory for each level of recursion.
+
+## Run JavaScript Run
+
+JavaScript's runtime uses agents to execute code, each with its own execution contexts, a main thread, worker threads, and task and microtask queues. Here's a breakdown:
+
+**Event Loops:**
+
+- Agents run on event loops, handling user events and enqueuing tasks.
+- Each agent's event loop manages tasks, microtasks, rendering, and painting.
+- The main thread, shared by a website's code and the browser's UI, runs on this loop.
+- There are three types of event loops: Window, Worker, and Worklet.
+
+**Tasks vs. Microtasks:**
+
+- Tasks: Scheduled JavaScript, executed one per event loop iteration.
+- Microtasks: Run after each task, executed continuously until the queue is empty.
+
+**Problems:**
+
+- Code running on the main thread can slow down or stall the browser.
+- Intensive tasks can cause sluggish performance.
+
+**Solutions:**
+
+- **Web Workers:** Run scripts in separate threads, reducing main thread workload.
+- **Asynchronous JavaScript:** Using promises, the main code runs while waiting for tasks.
+- **Microtasks:** Schedule tasks before the next event loop iteration, helping with performance. `queueMicrotask()` exposes this mechanism, standardizing microtask handling across browsers.
+
+In summary, JavaScript's runtime model, with its event loops, task and microtask queues, and solutions like web workers and `queueMicrotask()`, addresses the challenges of single-threaded execution and enhances performance and reliability.
+
 # Promise
 
 A Promise is like a placeholder for a value that might not be known right away. It's used in asynchronous programming, where operations don't finish immediately. A Promise can end in three ways:
