@@ -73,6 +73,14 @@ Setting a zero delay in `setTimeout` doesn't mean the callback will execute imme
 
 JavaScript's event loop model means it never gets blocked. I/O operations use events and callbacks, allowing other tasks like user input to be processed while waiting for things like IndexedDB queries or fetch() requests.
 
+# Microtasks and the JavaScript runtime environment
+
+Understanding JavaScript's runtime is key when debugging or optimizing task timing and scheduling. Originally, JavaScript was single-threaded, suitable for the less complex computing era. However, as computers evolved into multi-core systems and JavaScript usage expanded, enhancements were necessary.
+
+To overcome single-threaded limitations, Web APIs like `setTimeout()` and `setInterval()` were introduced. These allow task scheduling and support multi-threaded development. Understanding these features, including `queueMicrotask()`, is crucial to grasp JavaScript's approach to code scheduling and execution in today's complex applications.
+
+## Execution context
+
 # Promise
 
 A Promise is like a placeholder for a value that might not be known right away. It's used in asynchronous programming, where operations don't finish immediately. A Promise can end in three ways:
