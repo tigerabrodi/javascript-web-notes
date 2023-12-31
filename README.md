@@ -144,3 +144,9 @@ The Promise class in JavaScript provides four static methods for handling multip
 These methods work with an iterable of promises and return a new promise. They also support subclassing, allowing use with Promise subclasses. To subclass, the constructor must have the same format as the Promise constructor and include a static resolve method like `Promise.resolve()`.
 
 Remember, JavaScript is single-threaded, so it can only run one task at a time. While promises may seem concurrent, they're actually executed one after another. True parallel execution in JavaScript requires worker threads.
+
+# User Agent
+
+A user agent is a software that acts for a user, like a web browser or a bot. It sends a User-Agent HTTP header, or UA string, with each web request, identifying the browser, version, and operating system. Some may send a fake UA string, a practice known as user agent spoofing.
+
+You can access the UA string in JavaScript with `NavigatorID.userAgent`. An example UA string is: "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:35.0) Gecko/20100101 Firefox/35.0".
