@@ -1,3 +1,78 @@
+# Event loop
+
+JavaScript uses an event loop to run code and manage events. This approach, different from languages like C and Java, processes tasks in a queue.
+
+## Stack
+
+```js
+function foo(b) {
+  const a = 10;
+  return a + b + 11;
+}
+
+function bar(x) {
+  const y = 3;
+  return foo(x * y);
+}
+
+const baz = bar(7); // assigns 42 to baz
+```
+
+In JavaScript, function calls create a stack of frames:
+
+1. Calling `bar` makes a frame with its arguments and variables.
+2. `bar` calls `foo`, adding a new frame on top for `foo`'s arguments and variables.
+3. When `foo` finishes, its frame is removed.
+4. When `bar` finishes, the stack is empty.
+
+Arguments and variables exist outside the stack, so nested functions can use them even after their outer function ends.
+
+## Heap
+
+Objects are allocated in a heap which is just a name to denote a large (mostly unstructured) region of memory.
+
+## Queue
+
+JavaScript's runtime uses a message queue where each message is linked to a function. During the event loop, it processes messages starting with the oldest. Each message is removed from the queue, and its function is called, creating a new stack frame. This continues until the stack is empty, then moves to the next message.
+
+## Run to completion
+
+In JavaScript, the "run-to-completion" model means each message in the queue is fully processed before the next one starts. This ensures that a function, once started, runs entirely without interruption, unlike languages like C where threads can be paused.
+
+However, if a message processing takes too long, it can delay user interactions in web applications, leading to warnings like "a script is taking too long to run". To avoid this, it's best to keep message processing brief and split larger tasks into smaller messages.
+
+## Adding messages
+
+In web browsers, when an event happens and there's a listener for it, a message is added to the queue. If there's no listener, the event is ignored. For example, a click event adds a message if there's a click listener.
+
+`setTimeout` queues a message after a specified delay (minimum time, not guaranteed). If the queue is empty and the stack is clear, it processes after the delay. If the queue has messages, `setTimeout` waits its turn.
+
+Here's an example showing `setTimeout` doesn't run immediately after its delay:
+
+```javascript
+const seconds = new Date().getTime() / 1000;
+
+setTimeout(() => {
+  // prints after 2 seconds, not immediately after 500 milliseconds.
+  console.log(`Ran after ${new Date().getTime() / 1000 - seconds} seconds`);
+}, 500);
+
+while (true) {
+  if (new Date().getTime() / 1000 - seconds >= 2) {
+    console.log("Good, looped for 2 seconds");
+    break;
+  }
+}
+```
+
+## Zero delay
+
+Setting a zero delay in `setTimeout` doesn't mean the callback will execute immediately after 0 milliseconds. Instead, it waits for the current queue of tasks to finish. The zero delay is the minimum, not a guaranteed time for the callback to run.
+
+## Never Blocking
+
+JavaScript's event loop model means it never gets blocked. I/O operations use events and callbacks, allowing other tasks like user input to be processed while waiting for things like IndexedDB queries or fetch() requests.
+
 # Promise
 
 A Promise is like a placeholder for a value that might not be known right away. It's used in asynchronous programming, where operations don't finish immediately. A Promise can end in three ways:
