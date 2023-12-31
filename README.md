@@ -56,3 +56,16 @@ myPromise
   .then(handleFulfilledC)
   .catch(handleRejectedAny);
 ```
+
+## Handling multiple async tasks
+
+The Promise class in JavaScript provides four static methods for handling multiple asynchronous tasks:
+
+1. **Promise.all()**: Succeeds if all promises in the iterable succeed. Fails if any promise fails.
+2. **Promise.allSettled()**: Succeeds when all promises in the iterable are either fulfilled or rejected.
+3. **Promise.any()**: Succeeds if any promise in the iterable succeeds. Fails if all promises fail.
+4. **Promise.race()**: The result follows the first promise in the iterable to either fulfill or reject.
+
+These methods work with an iterable of promises and return a new promise. They also support subclassing, allowing use with Promise subclasses. To subclass, the constructor must have the same format as the Promise constructor and include a static resolve method like `Promise.resolve()`.
+
+Remember, JavaScript is single-threaded, so it can only run one task at a time. While promises may seem concurrent, they're actually executed one after another. True parallel execution in JavaScript requires worker threads.
