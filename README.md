@@ -206,3 +206,41 @@ Remember, JavaScript is single-threaded, so it can only run one task at a time. 
 A user agent is a software that acts for a user, like a web browser or a bot. It sends a User-Agent HTTP header, or UA string, with each web request, identifying the browser, version, and operating system. Some may send a fake UA string, a practice known as user agent spoofing.
 
 You can access the UA string in JavaScript with `NavigatorID.userAgent`. An example UA string is: "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:35.0) Gecko/20100101 Firefox/35.0".
+
+# Microtask in JS with queueMicrotask()
+
+## Microtasks
+
+The difference between tasks and microtasks in JavaScript may seem small, but it's significant:
+
+1. **Microtask Queue Processing:** After each task, the event loop checks for microtasks. If found, it runs all microtasks in the queue. This means microtasks are processed several times within a single event loop iteration, not just once like tasks.
+
+2. **Continuous Execution of Microtasks:** If a microtask adds more microtasks to the queue (using `queueMicrotask()`), these new microtasks are executed before moving on to the next task. The event loop keeps running microtasks until the queue is empty, even if new ones are added during the process. This means normal tasks can't run until the microtask queue is empty, once it has started processing.
+
+## Using Microtasks
+
+Enqueueing microtasks should be done judiciously, primarily in frameworks, libraries, or specific scenarios where no other solution fits. The `queueMicrotask()` method offers a standard way to schedule microtasks, avoiding the issues that arise when using promises for this purpose, like exception handling differences and additional overhead.
+
+**When to Use Microtasks:**
+
+1. **Consistent Ordering:** Microtasks ensure consistent task ordering, even with synchronous results, minimizing user-perceived delays.
+2. **Conditional Promises:** In scenarios where promises are used conditionally, microtasks can help maintain consistent operation order. For example, balancing a conditional statement where one branch uses promises and the other doesn't.
+
+3. **Batching Operations:** Microtasks are useful for batching multiple requests into a single operation. This can optimize performance by reducing overhead and delays from multiple individual operations.
+
+Example of Batching with Microtasks:
+
+```javascript
+const messageQueue = [];
+
+let sendMessage = (message) => {
+  messageQueue.push(message);
+  if (messageQueue.length === 1) {
+    queueMicrotask(() => {
+      const json = JSON.stringify(messageQueue);
+      messageQueue.length = 0;
+      fetch("url-of-receiver", json);
+    });
+  }
+};
+```
